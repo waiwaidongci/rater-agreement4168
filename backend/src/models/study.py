@@ -8,4 +8,5 @@ class AgreementStudy(Base):
  filename:Mapped[str]=mapped_column(String(180))
  description:Mapped[str]=mapped_column(Text,default='')
  categories:Mapped[list]=mapped_column(JSON)
+ category_scheme:Mapped[list|None]=mapped_column(JSON,nullable=True)
  raters:Mapped[list]=mapped_column(JSON)

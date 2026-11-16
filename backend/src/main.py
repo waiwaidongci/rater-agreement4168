@@ -15,6 +15,10 @@ from src.routes import auth,source,runs,memos,audit
 @asynccontextmanager
 async def lifespan(app):
  Base.metadata.create_all(engine)
+ try:
+  from src.services.schema import ensure_category_columns
+  ensure_category_columns(engine)
+ except Exception:logging.exception('category schema upgrade failed; startup continues')
  if SEED_DEMO:
   try:
    from scripts.seed_demo import seed

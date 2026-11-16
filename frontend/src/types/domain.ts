@@ -1,1 +1,9 @@
-export type User={id:number;email:string;name:string;role:string};export type Study={id:number;name:string;filename:string;description:string;categories:string[];raters:string[]};export type Specimen={id:number;study_id:number;reference:string;description:string};export type Vote={id:number;specimen_id:number;rater:string;category:string};export type Run={id:number;study_id:number;name:string;status:string;config:any;result:any;kappa:number|null;pbar:number|null;pe:number|null;error?:string};export type Memo={id:number;run_id:number;name:string;interpretation:string;next_step:string;result_snapshot:any;status:string;review_note:string};
+export type User={id:number;email:string;name:string;role:string};
+export type CategoryEntry={code?:string|null;name:string;locale?:string;term_version?:number|null;declared_name?:string;name_locale?:string};
+export type Study={id:number;name:string;filename:string;description:string;categories:string[];category_scheme?:CategoryEntry[]|null;raters:string[]};
+export type Specimen={id:number;study_id:number;reference:string;description:string};
+export type Vote={id:number;specimen_id:number;rater:string;category:string;category_code:string|null};
+export type Run={id:number;study_id:number;name:string;status:string;config:any;result:any;kappa:number|null;pbar:number|null;pe:number|null;error?:string;category_locale?:string;category_snapshot?:CategoryEntry[]|null};
+export type Memo={id:number;run_id:number;name:string;interpretation:string;next_step:string;result_snapshot:any;status:string;review_note:string};
+export type CategoryConcept={code:string;latest_version:number;names:Record<string,{name:string;version:number;resolved_locale:string}|null>;aliases:{locale:string;name:string}[];history:{locale:string;version:number;name:string}[]};
+export type QuarantineItem={id:number;source:string;study_id:number|null;raw_name:string;locale:string;reason_code:string;reason:string;status:string;resolved_code:string|null;details:any;created_at:string};

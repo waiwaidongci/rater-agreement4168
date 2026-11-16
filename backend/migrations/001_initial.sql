@@ -2,3 +2,12 @@
 -- agreement_studies(name UNIQUE,categories JSON,raters JSON), specimens(study_id,reference UNIQUE)
 -- rater_votes(specimen_id,rater UNIQUE,category), agreement_runs(result JSON,kappa DOUBLE,pbar DOUBLE,pe DOUBLE)
 -- review_memos(result_snapshot JSON), users(email UNIQUE), audit_logs. DOUBLE mappings use asdecimal=False.
+--
+-- 002 (category versioning, applied additively by src/services/schema.py):
+--   category_concepts(code UNIQUE) <- stable identity, never renamed
+--   category_terms(concept_id,locale,version) <- versioned display names; rename appends a version
+--   category_aliases(concept_id,locale,normalized) <- synonyms and retired names
+--   category_quarantine(fingerprint UNIQUE,reason_code,status) <- unknown/duplicate mappings, never dropped
+--   agreement_studies.category_scheme JSON NULL <- declared order + code + frozen term version
+--   rater_votes.category_code VARCHAR(40) NULL index <- statistics key; legacy names stay readable
+--   agreement_runs.category_locale VARCHAR(16) DEFAULT 'zh-CN', category_snapshot JSON NULL

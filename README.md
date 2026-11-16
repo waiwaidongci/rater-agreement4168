@@ -68,6 +68,30 @@ MySQL的κ/Pbar/Pe列均用DOUBLE(asdecimal=False)，保持Python float，避免
 
 2–240试样、声明2–6唯一类别、固定3位唯一标记者；每试样同一面板各一票。重复试样、重复人、缺票、未知类别和非法B/seed拒绝；安全422不回显NaN等非法input。全单类数据可存底稿，但κ计算明确失败，不伪造结果。指纹按试样编号/票键排序，行序稳定，对票、试样说明、类别/面板顺序和参数敏感。
 
+## 类别版本、同义名与多语言
+
+类别不再以字符串为主键。`category_concepts.code`（形如 `CAT-…`）是稳定身份，改名不动编码；
+`category_terms(concept,locale,version)`保存各语言显示名的版本，改名只追加新版本；
+`category_aliases`保存同义名与旧名，导入与改票都先解析到编码再落库。逐票存
+`category_code`，研究存声明顺序 `category_scheme`，每次运行创建时冻结
+`category_snapshot`（编码+显示名+语言+版本），worker 只按该快照计算与呈现。
+
+- 新导入可用名称、同义名或编码；名称按当前语言解析，未知名称 422 并说明。
+- 改名只影响之后创建的新运行。历史运行、`result_snapshot` 与已批准说明保留原显示名；
+  重复审批仍 409，旧快照不被改写。
+- 旧库升级：启动时 `src/services/schema.py` 只追加列，不重写数据；
+  `python -m scripts.migrate_categories` 或负责人页面按钮回填编码，按研究逐个提交，可重复执行。
+  重复执行返回 `unchanged`，不新增概念/同义名/隔离记录，也不改写旧名称或统计。
+- 未知类别与重复/歧义映射写入 `category_quarantine`，保留原名称、原因码与详情；
+  隔离记录不删除，处置后标为 resolved 并记录目标编码。旧数据在隔离期间仍可回读。
+- 页面“试样与逐票”显示编码、当前中英文名、版本与隔离队列，并可执行迁移和核对覆盖率；
+  “κ与重采样”与复核说明显示冻结编码和名称版本；“口径复核”可按 `zh-CN`/`en`
+  导出批准快照 CSV，列中出现快照名、导出名、编码、语言与 `translation_status`
+  （`translated`/`locale_fallback`/`original`/`no_code`）。导出语言只影响导出文件。
+
+迁移细节与接口见 `backend/migrations/README.md`。测试覆盖旧数据读取、迁移重跑幂等、
+改名隔离、同义名冲突、跨语言导出与失败后恢复：`cd backend && pytest tests/test_categories.py`。
+
 |层|技术|
 |---|---|
 |前端|Vue3 / TypeScript / Vite6.4.6；Public Sans+Noto Serif SC；炭灰逐票图谱|

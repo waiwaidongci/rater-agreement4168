@@ -8,3 +8,4 @@ class RaterVote(Base):
  specimen_id:Mapped[int]=mapped_column(ForeignKey('specimens.id'))
  rater:Mapped[str]=mapped_column(String(80))
  category:Mapped[str]=mapped_column(String(80))
+ category_code:Mapped[str|None]=mapped_column(String(40),nullable=True,index=True)

@@ -5,3 +5,4 @@ from .specimen import Specimen
 from .vote import RaterVote
 from .run import AgreementRun
 from .memo import ReviewMemo
+from .category import CategoryConcept,CategoryTerm,CategoryAlias,CategoryQuarantine
